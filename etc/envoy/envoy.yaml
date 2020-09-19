@@ -31,33 +31,36 @@ static_resources:
     - name: nginx_cluster
       connect_timeout: 0.25s
       lb_policy: ROUND_ROBIN
-      type: EDS
-      eds_cluster_config:
-        eds_config:
-          api_config_source:
-            api_type: GRPC
-            grpc_services:
-              envoy_grpc:
-                cluster_name: xds_cluster
-    - name: httpd_cluster
-      connect_timeout: 0.25s
-      lb_policy: ROUND_ROBIN
-      type: EDS
-      eds_cluster_config:
-        eds_config:
-          api_config_source:
-            api_type: GRPC
-            grpc_services:
-              envoy_grpc:
-                cluster_name: xds_cluster
-    - name: xds_cluster
-      connect_timeout: 0.25s
-      lb_policy: ROUND_ROBIN
-      http2_protocol_options: {}
+      type: STRICT_DNS
       load_assignment:
-        cluster_name: xds_cluster
+        cluster_name: nginx_service
         endpoints:
           - lb_endpoints:
               - endpoint:
                   address:
-                    socket_address: { address: 127.0.0.1, port_value: 20000 }
+                    socket_address:
+                      address: envoy_test_nginx_1
+                      port_value: 80
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: envoy_test_nginx_2
+                      port_value: 80
+    - name: httpd_cluster
+      connect_timeout: 0.25s
+      lb_policy: ROUND_ROBIN
+      type: STRICT_DNS
+      load_assignment:
+        cluster_name: httpd_service
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: envoy_test_httpd_1
+                      port_value: 80
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: envoy_test_httpd_2
+                      port_value: 80

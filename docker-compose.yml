@@ -6,5 +6,7 @@ services:
     image: httpd:latest
   envoy:
     image: envoyproxy/envoy:v1.14-latest
+    ports:
+      - 80:80
     volumes:
       - ${PWD}/etc/envoy:/etc/envoy
