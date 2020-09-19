@@ -1,0 +1,10 @@
+version: "3"
+services:
+  nginx:
+    image: nginx:latest
+  httpd:
+    image: httpd:latest
+  envoy:
+    image: envoyproxy/envoy:v1.14-latest
+    volumes:
+      - ${PWD}/etc/envoy:/etc/envoy
